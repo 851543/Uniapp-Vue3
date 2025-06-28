@@ -1,13 +1,23 @@
 <script setup lang="ts">
-import { onLaunch, onShow, onHide } from "@dcloudio/uni-app";
-onLaunch(() => {
-  console.log("App Launch");
-});
-onShow(() => {
-  console.log("App Show");
-});
-onHide(() => {
-  console.log("App Hide");
-});
+import { onLaunch } from "@dcloudio/uni-app";
+import { getToken } from '@/utils/auth'
+
+const checkLogin = ()=>{
+  if (!getToken()) {
+    uni.reLaunch({ url: '/pages/login/index' })
+  }
+}
+
+const initApp = ()=>{
+  checkLogin()
+}
+
+onLaunch(()=>{
+  initApp()
+})
 </script>
-<style></style>
+
+<style lang="scss">
+  @use '@/static/scss/index.scss'
+</style>
+
