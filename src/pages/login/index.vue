@@ -12,7 +12,8 @@
       </view>
       <view class="input-item flex align-center">
         <view class="iconfont icon-password icon"></view>
-        <input v-model="loginForm.password" class="input" type="safe-password" placeholder="请输入密码" :maxlength="20" :password="true"/>
+        <input v-model="loginForm.password" class="input" type="safe-password" placeholder="请输入密码" :maxlength="20"
+          :password="true" />
       </view>
       <view class="input-item flex align-center" style="width: 60%;margin: 0px;" v-if="captchaEnabled">
         <view class="iconfont icon-code icon"></view>
@@ -24,7 +25,7 @@
       <view class="action-btn">
         <button @click="handleLogin" class="login-btn cu-btn block bg-blue lg round">登录</button>
       </view>
-      <view class="reg text-center" v-if="register">
+      <view class="reg text-center" v-if="registerUserEnabled">
         <text class="text-grey1">没有账号？</text>
         <text @click="handleUserRegister" class="text-blue">立即注册</text>
       </view>
@@ -43,7 +44,6 @@ import { showMsgError, showLoading, hideLoading } from '@/utils/uni-utils'
 
 const codeUrl = ref('')
 const captchaEnabled = ref(true)
-const register = ref(true)
 const loginForm = reactive({
   username: 'admin',
   password: 'admin123',
@@ -92,7 +92,25 @@ const loginSuccess = async () => {
   uni.reLaunch({ url: '/pages/index/index' })
 }
 
+// 获取滑块开关
+const sliderEnabled = ref(true)
+// 获取忘记密码开关
+const forgetPwdEnabled = ref(true)
+// 注册用户开关
+const registerUserEnabled = ref(true)
+// 获取登录功能开关
+const getLoginFunctionEnabled = async () => {
+  const res = await LoginService.getLoginFunctionEnabled()
+  getCode()
+  sliderEnabled.value = res.sliderEnabled === undefined ? true : res.sliderEnabled
+  forgetPwdEnabled.value =
+    res.forgetPasswordEnabled === undefined ? true : res.forgetPasswordEnabled
+  registerUserEnabled.value =
+    res.registerUserEnabled === undefined ? true : res.registerUserEnabled
+}
+
 onMounted(() => {
+  getLoginFunctionEnabled()
   getCode()
   // #ifdef H5
   if (getToken()) {
